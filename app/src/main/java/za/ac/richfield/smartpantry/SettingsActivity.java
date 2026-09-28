@@ -1,0 +1,6 @@
+package za.ac.richfield.smartpantry;
+import android.app.*;import android.os.Bundle;import android.widget.*;
+public class SettingsActivity extends Activity {
+ @Override public void onCreate(Bundle b){super.onCreate(b);LinearLayout root=Ui.page(this,"Settings");Ui.nav(this,root);Switch alert=new Switch(this);alert.setText("Show expiring soon reminder");alert.setChecked(getPreferences(MODE_PRIVATE).getBoolean("expiry_alert",true));root.addView(alert);TextView reminder=Ui.text(this,root,"");alert.setOnCheckedChangeListener((v,checked)->{getPreferences(MODE_PRIVATE).edit().putBoolean("expiry_alert",checked).apply();refresh(reminder,checked);});refresh(reminder,alert.isChecked());}
+ private void refresh(TextView t,boolean enabled){if(!enabled){t.setText("Reminders are off.");return;}long today=System.currentTimeMillis()/86400000L;int count=0;for(PantryDb.Item item:new PantryDb(this).items()){if(item.expiry==null||item.expiry.isEmpty())continue;try{long day=new java.text.SimpleDateFormat("yyyy-MM-dd",java.util.Locale.ROOT).parse(item.expiry).getTime()/86400000L;if(day>=today&&day<=today+3)count++;}catch(java.text.ParseException ignored){}}t.setText(count+" pantry item(s) expire within 3 days. In-app reminder only.");}
+}
