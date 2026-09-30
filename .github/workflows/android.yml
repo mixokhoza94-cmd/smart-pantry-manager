@@ -17,6 +17,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Verify all seeded recipe matching rules
+        run: python3 test_matching.py
       - name: Build and lint
         run: gradle assembleDebug lintDebug --stacktrace
       - name: Enable emulator acceleration
